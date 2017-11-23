@@ -1,7 +1,18 @@
-import { isRouter } from '../utils'
+'use strict';
 
-export default function routerInterceptor({ router }, trackEvent) {
-    if (isRouter(router)) {
-        router.afterEach((to, from) => trackEvent('router', 'afterEach', { type: 'router' }, { to, from }))
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = routerInterceptor;
+
+var _utils = require('../utils');
+
+function routerInterceptor(_ref, trackEvent) {
+    var router = _ref.router;
+
+    if ((0, _utils.isRouter)(router)) {
+        router.afterEach(function (to, from) {
+            return trackEvent('router', 'afterEach', { type: 'router' }, { to: to, from: from });
+        });
     }
 }

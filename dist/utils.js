@@ -1,101 +1,176 @@
-import store from './store'
-import StackTrace from 'stacktrace-js'
+'use strict';
 
-let events, toString
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-events = getBrowserEvents()
-toString = Object.prototype.toString
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
-export function noop() {}
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
-export function isArray(obj) {
-    return Array.isArray(obj)
+var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.noop = noop;
+exports.isArray = isArray;
+exports.isObject = isObject;
+exports.isFunction = isFunction;
+exports.isPromise = isPromise;
+exports.isRouter = isRouter;
+exports.isVuex = isVuex;
+exports.isAxios = isAxios;
+exports.getResponseType = getResponseType;
+exports.getEventType = getEventType;
+exports.assign = assign;
+exports.guid = guid;
+
+var _store = require('./store');
+
+var _store2 = _interopRequireDefault(_store);
+
+var _stacktraceJs = require('stacktrace-js');
+
+var _stacktraceJs2 = _interopRequireDefault(_stacktraceJs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var events = void 0,
+    toString = void 0;
+
+events = getBrowserEvents();
+toString = Object.prototype.toString;
+
+function noop() {}
+
+function isArray(obj) {
+    return Array.isArray(obj);
 }
 
-export function isObject(obj) {
-    return toString.call(obj) === '[object Object]'
+function isObject(obj) {
+    return toString.call(obj) === '[object Object]';
 }
 
-export function isFunction(obj) {
-    return toString.call(obj) === '[object Function]'
+function isFunction(obj) {
+    return toString.call(obj) === '[object Function]';
 }
 
-export function isPromise(obj) {
-    return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function'
+function isPromise(obj) {
+    return !!obj && ((typeof obj === 'undefined' ? 'undefined' : (0, _typeof3.default)(obj)) === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
 }
 
-export function isRouter(obj) {
-    return !!(obj && isObject(obj) && obj.mode && obj.currentRoute && obj.push && obj.afterEach)
+function isRouter(obj) {
+    return !!(obj && isObject(obj) && obj.mode && obj.currentRoute && obj.push && obj.afterEach);
 }
 
-export function isVuex(obj) {
-    return !!(obj && isObject(obj) && obj.commit && obj.dispatch && obj.subscribe && obj.subscribeAction)
+function isVuex(obj) {
+    return !!(obj && isObject(obj) && obj.commit && obj.dispatch && obj.subscribe && obj.subscribeAction);
 }
 
-export function isAxios(obj) {
-    return !!(obj && obj.get && obj.post && obj.interceptors && obj.interceptors.request && obj.interceptors.response)
+function isAxios(obj) {
+    return !!(obj && obj.get && obj.post && obj.interceptors && obj.interceptors.request && obj.interceptors.response);
 }
 
-export function getResponseType(contentType) {
-    if (~contentType.indexOf('text/xml')) { return 'xml' }
-    if (~contentType.indexOf('text/html')) { return 'html' }
-    if (~contentType.indexOf('text/plain')) { return 'text' }
-    if (~contentType.indexOf('application/json')) { return 'json' }
-    if (~contentType.indexOf('application/javascript')) { return 'javascript' }
-}
-
-export function getEventType() {
-    let type = null
-    let stack = StackTrace.getSync()
-    
-    for (let line of stack) {
-        if (events.includes(line.functionName)) {
-            type = line.functionName
-            break
-        }
+function getResponseType(contentType) {
+    if (~contentType.indexOf('text/xml')) {
+        return 'xml';
     }
-
-    return type
+    if (~contentType.indexOf('text/html')) {
+        return 'html';
+    }
+    if (~contentType.indexOf('text/plain')) {
+        return 'text';
+    }
+    if (~contentType.indexOf('application/json')) {
+        return 'json';
+    }
+    if (~contentType.indexOf('application/javascript')) {
+        return 'javascript';
+    }
 }
 
-export function assign(receiver, supplier) {
-    for (let key in supplier) {
-        if (supplier.hasOwnProperty(key) && key !== 'prototype') {
-            if (isArray(receiver[key]) && isArray(supplier[key])) {
-                receiver[key] = [...receiver[key], ...supplier[key]]
-            } else {
-                receiver[key] = supplier[key]
+function getEventType() {
+    var type = null;
+    var stack = _stacktraceJs2.default.getSync();
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = (0, _getIterator3.default)(stack), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var line = _step.value;
+
+            if (events.includes(line.functionName)) {
+                type = line.functionName;
+                break;
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
             }
         }
     }
 
-    return receiver
+    return type;
 }
 
-export function guid() {
-    let uuid, s4, key
+function assign(receiver, supplier) {
+    for (var key in supplier) {
+        if (supplier.hasOwnProperty(key) && key !== 'prototype') {
+            if (isArray(receiver[key]) && isArray(supplier[key])) {
+                receiver[key] = [].concat((0, _toConsumableArray3.default)(receiver[key]), (0, _toConsumableArray3.default)(supplier[key]));
+            } else {
+                receiver[key] = supplier[key];
+            }
+        }
+    }
 
-    key = '__TRACK__EVENT__UUID__'
-    s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
+    return receiver;
+}
 
-    if (uuid = store.get(key)) {
-        return uuid
+function guid() {
+    var uuid = void 0,
+        s4 = void 0,
+        key = void 0;
+
+    key = '__TRACK__EVENT__UUID__';
+    s4 = function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    };
+
+    if (uuid = _store2.default.get(key)) {
+        return uuid;
     } else {
-        return store.set(key, `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`)
+        return _store2.default.set(key, '' + s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4());
     }
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/Events
-function getBrowserEvents(){
-    let event, events
+function getBrowserEvents() {
+    var event = void 0,
+        events = void 0;
 
-    events = []
+    events = [];
 
     for (event in document) {
         if (typeof document[event] !== "function" && event !== null && event.substring(0, 2) === "on" && event.substring(0, 8) !== 'onwebkit') {
-            events.push(event.substring(2))
+            events.push(event.substring(2));
         }
     }
 
-    return events
+    return events;
 }

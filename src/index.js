@@ -38,12 +38,11 @@ function getTrackEventFunction(opts) {
 }
 
 function meta(obj, uuid) {
-    return {
-        ...obj,
+    return Object.assign({}, obj, {
         id: uuid || guid(),
         url: location.href,
         timeStamp: Date.now()
-    }
+    })
 }
 
 export default plugin
