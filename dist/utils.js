@@ -33,10 +33,6 @@ var _store = require('./store');
 
 var _store2 = _interopRequireDefault(_store);
 
-var _stacktraceJs = require('stacktrace-js');
-
-var _stacktraceJs2 = _interopRequireDefault(_stacktraceJs);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var events = void 0,
@@ -94,19 +90,22 @@ function getResponseType(contentType) {
 }
 
 function getEventType() {
-    var type = null;
-    var stack = _stacktraceJs2.default.getSync();
+    var type = void 0,
+        stack = void 0;
+
+    type = null;
+    stack = new Error().stack;
 
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
     try {
-        for (var _iterator = (0, _getIterator3.default)(stack), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var line = _step.value;
+        for (var _iterator = (0, _getIterator3.default)(events), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var event = _step.value;
 
-            if (events.includes(line.functionName)) {
-                type = line.functionName;
+            if (~stack.indexOf(event)) {
+                type = event;
                 break;
             }
         }

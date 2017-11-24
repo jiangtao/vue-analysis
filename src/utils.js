@@ -1,5 +1,4 @@
 import store from './store'
-import StackTrace from 'stacktrace-js'
 
 let events, toString
 
@@ -45,12 +44,14 @@ export function getResponseType(contentType) {
 }
 
 export function getEventType() {
-    let type = null
-    let stack = StackTrace.getSync()
+    let type, stack
     
-    for (let line of stack) {
-        if (events.includes(line.functionName)) {
-            type = line.functionName
+    type = null
+    stack = (new Error()).stack
+    
+    for (let event of events) {
+        if (~stack.indexOf(event)) {
+            type = event
             break
         }
     }
